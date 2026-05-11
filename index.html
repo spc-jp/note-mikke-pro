@@ -659,6 +659,36 @@ footer .motto{
           <input type="radio" id="t3" name="tone" value="淡々とユーモア">
           <label for="t3">🌿 淡々ユーモア</label>
         </div>
+        <div class="radio-item">
+          <input type="radio" id="t4" name="tone" value="熱く語る">
+          <label for="t4">🔥 熱く語る</label>
+        </div>
+        <div class="radio-item">
+          <input type="radio" id="t5" name="tone" value="寄り添う">
+          <label for="t5">🌸 寄り添う</label>
+        </div>
+        <div class="radio-item">
+          <input type="radio" id="t6" name="tone" value="知的に整理">
+          <label for="t6">📚 知的に整理</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>結末の方向性</label>
+      <div class="radio-group">
+        <div class="radio-item">
+          <input type="radio" id="end1" name="ending" value="前向きな締め" checked>
+          <label for="end1">✨ 前向きな締め<br><span style="font-size:11px;color:var(--text-mute);font-weight:400">希望・行動を促す</span></label>
+        </div>
+        <div class="radio-item">
+          <input type="radio" id="end2" name="ending" value="余韻を残す">
+          <label for="end2">🌌 余韻を残す<br><span style="font-size:11px;color:var(--text-mute);font-weight:400">じわっと心に残す</span></label>
+        </div>
+        <div class="radio-item">
+          <input type="radio" id="end3" name="ending" value="問いを残す">
+          <label for="end3">❓ 問いを残す<br><span style="font-size:11px;color:var(--text-mute);font-weight:400">読者に考えさせる</span></label>
+        </div>
       </div>
     </div>
 
@@ -877,6 +907,7 @@ function buildPrompt(){
   const memo = document.getElementById('memo').value.trim();
   const category = document.getElementById('category').value;
   const tone = document.querySelector('input[name="tone"]:checked').value;
+  const ending = document.querySelector('input[name="ending"]:checked').value;
   const length = document.querySelector('input[name="length"]:checked').value;
   const profileUrl = document.getElementById('profileUrl').value.trim();
 
@@ -892,6 +923,12 @@ function buildPrompt(){
     long: '4〜5個'
   }[length];
 
+  const endingSpec = {
+    '前向きな締め': '希望や行動を促す前向きな締め方。「明日から〜してみよう」「あなたも〜できるはず」のように、読者の背中を温かく押す。',
+    '余韻を残す': '余韻を残す静かな締め方。情景描写や感覚的な一文で終わる。「あの夜の空を、今も覚えている」のように、じわっと心に残す。',
+    '問いを残す': '問いかけで終わる締め方。「あなたなら、どうしますか？」「これは、本当に正しいことだったのだろうか」のように、読者に考えさせる余地を残す。'
+  }[ending];
+
   const profileBlock = profileUrl
     ? `\n【プロフィールURL】${profileUrl}\n→ profileCTAフィールドに、記事のテーマに自然につながる誘導文を1〜2文で作成してください。「↓こちらをご覧ください」のようなAI丸出し表現は禁止。「他にも〜について書いています」「もしよかったら〜のぞいてみてくださいね」のような、体験談の延長として自然な誘導にしてください。`
     : `\n→ profileCTAフィールドは空文字 "" にしてください。`;
@@ -904,6 +941,7 @@ ${memo}
 
 【カテゴリ】${category || '未指定'}
 【トーン】${tone}
+【結末の方向性】${ending}
 【記事の長さ】${lengthSpec}
 ${profileBlock}
 
@@ -929,7 +967,7 @@ ${profileBlock}
     "intro":"冒頭フック。共感を呼ぶ一文から始める（80〜120字）",
     "body":"本文。${lengthSpec}。### 小見出しを${subheadCount}入れる。走り書きの事実を脚色せず、体験をそのまま深掘りする。${tone}のトーンを徹底する。",
     "insight":"気づきパート。学びを1つに絞る（150〜200字）",
-    "closing":"締めの一言。読者の背中をそっと押す（80〜120字）",
+    "closing":"締めの一言（80〜120字）。${endingSpec}",
     "profileCTA":"プロフィール誘導文（上記ルール参照）",
     "hashtags":["#タグ1","#タグ2","#タグ3","#タグ4","#タグ5"]
   },
@@ -957,6 +995,7 @@ ${profileBlock}
 ・キャッチーだが大げさすぎないタイトルにする
 ・本文は必ず「### 小見出し」を${subheadCount}入れる
 ・本文の文字数は${lengthSpec}を厳守する
+・closingは指定された結末タイプ「${ending}」を必ず反映する
 
 【ハッシュタグのルール】
 ・必ず5個生成する
