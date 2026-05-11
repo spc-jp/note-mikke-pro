@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>noteみっけPro - 走り書きから、心を動かすnote記事へ</title>
+<meta name="description" content="自分のリアルな体験を走り書きで入力するだけ。AIが感情を読み取り、ターゲットを特定し、人間味のあるnote記事に整えます。">
+<meta property="og:title" content="noteみっけPro">
+<meta property="og:description" content="走り書きから、心を動かすnote記事へ。">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#223670;
+  --navy-dark:#1a2856;
+  --gold:#D0A900;
+  --gold-light:#e6c84a;
+  --bg:#fafaf7;
+  --bg-card:#ffffff;
+  --text:#1a2238;
+  --text-mute:#6b7280;
+  --border:#e5e7eb;
+  --light-blue:#F0F4FF;
+  --shadow:0 4px 12px rgba(34,54,112,0.08);
+  --shadow-lg:0 12px 32px rgba(34,54,112,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Noto Sans JP',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.7;
+  min-height:100vh;
+}
+h1,h2,h3,.serif{font-family:'Noto Serif JP',serif}
+
+/* ヘッダー */
+header{
+  background:var(--navy);
+  color:#fff;
+  padding:14px 20px;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:var(--shadow);
+}
+.header-inner{
+  max-width:920px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.logo{
+  font-family:'Noto Serif JP',serif;
+  font-weight:700;
+  font-size:20px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.logo .pro{
+  background:var(--gold);
+  color:var(--navy);
+  font-size:11px;
+  padding:2px 8px;
+  border-radius:4px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:700;
+  letter-spacing:1px;
+}
+.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.switch-btn{
+  background:rgba(255,255,255,0.1);
+  color:#fff;
+  border:1px solid rgba(255,255,255,0.3);
+  padding:6px 12px;
+  border-radius:6px;
+  font-size:13px;
+  cursor:pointer;
+  text-decoration:none;
+  font-family:inherit;
+  transition:all .2s;
+}
+.switch-btn:hover{background:rgba(255,255,255,0.2)}
+.trial-badge{
+  background:var(--gold);
+  color:var(--navy);
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:700;
+}
+.trial-badge.warn{background:#fee2e2;color:#991b1b}
+
+/* メインエリア */
+main{max-width:920px;margin:0 auto;padding:24px 16px 80px}
+
+.hero{
+  text-align:center;
+  padding:36px 16px 28px;
+}
+.hero h1{
+  font-size:clamp(24px,5vw,36px);
+  color:var(--navy);
+  margin-bottom:12px;
+  letter-spacing:.02em;
+}
+.hero .tag{
+  color:var(--gold);
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:.15em;
+  margin-bottom:8px;
+}
+.hero p{color:var(--text-mute);font-size:15px}
+
+/* カード */
+.card{
+  background:var(--bg-card);
+  border-radius:14px;
+  padding:24px 22px;
+  box-shadow:var(--shadow);
+  margin-bottom:18px;
+  border:1px solid var(--border);
+}
+.card h2{
+  font-size:18px;
+  color:var(--navy);
+  margin-bottom:14px;
+  padding-bottom:10px;
+  border-bottom:2px solid var(--gold);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+/* 入力 */
+label{
+  display:block;
+  font-weight:700;
+  margin-bottom:8px;
+  color:var(--navy);
+  font-size:14px;
+}
+.help{
+  color:var(--text-mute);
+  font-size:12px;
+  margin-bottom:8px;
+  font-weight:400;
+}
+textarea,select,input[type="text"],input[type="password"]{
+  width:100%;
+  padding:12px 14px;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  font-family:inherit;
+  font-size:15px;
+  background:#fff;
+  color:var(--text);
+  resize:vertical;
+  transition:border-color .2s;
+}
+textarea:focus,select:focus,input:focus{
+  outline:none;
+  border-color:var(--navy);
+}
+textarea{min-height:220px;line-height:1.7}
+.field{margin-bottom:18px}
+.field:last-child{margin-bottom:0}
+
+/* ラジオ */
+.radio-group{display:flex;gap:10px;flex-wrap:wrap}
+.radio-item{
+  flex:1;
+  min-width:140px;
+  position:relative;
+}
+.radio-item input{position:absolute;opacity:0}
+.radio-item label{
+  display:block;
+  padding:14px 12px;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  text-align:center;
+  cursor:pointer;
+  transition:all .2s;
+  font-size:14px;
+  margin:0;
+  background:#fff;
+}
+.radio-item input:checked + label{
+  border-color:var(--navy);
+  background:var(--light-blue);
+  color:var(--navy);
+  font-weight:700;
+}
+
+/* メインCTA */
+.btn-primary{
+  width:100%;
+  padding:18px;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-dark) 100%);
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  font-size:17px;
+  font-weight:700;
+  cursor:pointer;
+  font-family:inherit;
+  transition:all .25s;
+  box-shadow:0 4px 14px rgba(34,54,112,0.3);
+  letter-spacing:.05em;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(34,54,112,0.4)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+/* ローディング */
+.loading{display:none;text-align:center;padding:30px}
+.loading.active{display:block}
+.spinner{
+  width:48px;height:48px;
+  border:4px solid var(--light-blue);
+  border-top-color:var(--navy);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:0 auto 16px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-msg{color:var(--text-mute);font-size:14px}
+
+/* 結果エリア */
+#results{display:none}
+#results.active{display:block;animation:fadeIn .5s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* 感情スコア */
+.emotion-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:520px){.emotion-grid{grid-template-columns:repeat(2,1fr)}}
+.emotion-item{
+  background:var(--light-blue);
+  padding:12px 8px;
+  border-radius:10px;
+  text-align:center;
+}
+.emotion-name{font-size:12px;color:var(--text-mute);margin-bottom:4px}
+.emotion-value{font-size:22px;font-weight:700;color:var(--navy);font-family:'Noto Serif JP',serif}
+.emotion-bar{
+  height:6px;
+  background:rgba(34,54,112,0.1);
+  border-radius:3px;
+  margin-top:6px;
+  overflow:hidden;
+}
+.emotion-bar-fill{height:100%;background:var(--gold);border-radius:3px;transition:width .8s}
+.emotion-summary{
+  background:var(--navy);
+  color:#fff;
+  padding:14px 18px;
+  border-radius:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.emotion-keyword{
+  background:var(--gold);
+  color:var(--navy);
+  padding:4px 12px;
+  border-radius:20px;
+  font-weight:700;
+  font-size:14px;
+}
+
+/* ペルソナ */
+.persona-list{display:grid;gap:12px}
+.persona-card{
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  padding:16px;
+  background:#fafbff;
+}
+.persona-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+  flex-wrap:wrap;
+}
+.persona-num{
+  background:var(--gold);
+  color:var(--navy);
+  width:28px;height:28px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;
+  flex-shrink:0;
+}
+.persona-name{font-weight:700;color:var(--navy);font-size:15px}
+.persona-meta{font-size:13px;color:var(--text-mute)}
+.persona-row{font-size:14px;margin-top:6px;line-height:1.6}
+.persona-row b{color:var(--navy)}
+
+/* 記事 */
+.article-actions{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.btn-copy{
+  background:var(--gold);
+  color:var(--navy);
+  border:none;
+  padding:10px 16px;
+  border-radius:8px;
+  font-weight:700;
+  cursor:pointer;
+  font-family:inherit;
+  font-size:14px;
+  transition:all .2s;
+}
+.btn-copy:hover{background:var(--gold-light)}
+.btn-copy.copied{background:#22c55e;color:#fff}
+.article-title{
+  font-family:'Noto Serif JP',serif;
+  font-size:22px;
+  font-weight:700;
+  color:var(--navy);
+  line-height:1.5;
+  padding:14px 0;
+  border-top:2px solid var(--gold);
+  border-bottom:2px solid var(--gold);
+  margin-bottom:18px;
+}
+.article-body{
+  white-space:pre-wrap;
+  line-height:1.9;
+  color:var(--text);
+  font-size:15px;
+}
+.article-body h3{
+  font-size:17px;
+  color:var(--navy);
+  margin:20px 0 10px;
+  padding-left:10px;
+  border-left:4px solid var(--gold);
+}
+
+/* 採点 */
+.score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:600px){.score-grid{grid-template-columns:repeat(2,1fr)}}
+.score-item{
+  text-align:center;
+  padding:14px 8px;
+  background:#fff;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+}
+.score-label{font-size:12px;color:var(--text-mute);margin-bottom:6px}
+.score-value{font-size:24px;font-weight:700;color:var(--navy);font-family:'Noto Serif JP',serif}
+.score-max{font-size:12px;color:var(--text-mute);font-weight:400}
+.score-total{
+  background:linear-gradient(135deg,var(--navy),var(--navy-dark));
+  color:#fff;
+  padding:18px;
+  border-radius:12px;
+  text-align:center;
+}
+.score-total .label{font-size:13px;opacity:.85;margin-bottom:4px;letter-spacing:.1em}
+.score-total .big{font-size:42px;font-weight:700;font-family:'Noto Serif JP',serif;line-height:1}
+.score-total .big small{font-size:18px;opacity:.7}
+
+/* 改善コメント */
+.improve-block{
+  border-left:4px solid var(--gold);
+  padding:12px 16px;
+  background:#fffaf0;
+  border-radius:0 10px 10px 0;
+  margin-bottom:12px;
+}
+.improve-cat{font-weight:700;color:var(--navy);margin-bottom:10px;font-size:15px}
+.improve-item{
+  background:#fff;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:8px;
+  font-size:14px;
+  line-height:1.7;
+}
+.improve-item b{color:var(--gold);display:inline-block;min-width:50px}
+
+/* モーダル */
+.modal-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  z-index:1000;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+}
+.modal-overlay.active{display:flex;animation:fadeIn .3s}
+.modal{
+  background:#fff;
+  border-radius:16px;
+  max-width:520px;
+  width:100%;
+  max-height:90vh;
+  overflow-y:auto;
+  padding:24px;
+}
+.modal h3{
+  font-size:20px;
+  color:var(--navy);
+  text-align:center;
+  margin-bottom:6px;
+}
+.modal .sub{text-align:center;color:var(--text-mute);font-size:13px;margin-bottom:20px}
+.plan-card{
+  border:2px solid var(--border);
+  border-radius:12px;
+  padding:18px;
+  margin-bottom:12px;
+  position:relative;
+}
+.plan-card.light{background:var(--light-blue)}
+.plan-card.pro{
+  background:var(--navy);
+  color:#fff;
+  border-color:var(--gold);
+}
+.plan-card.pro .badge-rec{
+  position:absolute;top:-10px;right:14px;
+  background:var(--gold);color:var(--navy);
+  padding:3px 10px;border-radius:6px;
+  font-size:11px;font-weight:700;letter-spacing:1px;
+}
+.plan-title{font-size:16px;font-weight:700;margin-bottom:6px}
+.plan-price{font-family:'Noto Serif JP',serif;font-size:26px;font-weight:700;margin-bottom:4px}
+.plan-card.pro .plan-price{color:var(--gold)}
+.plan-card.light .plan-price{color:var(--navy)}
+.plan-note{font-size:12px;opacity:.85;margin-bottom:10px}
+.plan-features{font-size:13px;line-height:1.9;margin-bottom:12px}
+.plan-btn{
+  display:block;
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  font-weight:700;
+  text-align:center;
+  text-decoration:none;
+  font-size:14px;
+  transition:all .2s;
+  font-family:inherit;
+  border:none;
+  cursor:pointer;
+}
+.plan-card.light .plan-btn{background:var(--navy);color:#fff}
+.plan-card.pro .plan-btn{background:var(--gold);color:var(--navy)}
+.plan-btn:hover{transform:translateY(-1px)}
+.divider-text{
+  text-align:center;
+  color:var(--text-mute);
+  font-size:13px;
+  margin:14px 0 10px;
+  position:relative;
+}
+.divider-text::before,.divider-text::after{
+  content:'';
+  position:absolute;
+  top:50%;width:30%;
+  height:1px;background:var(--border);
+}
+.divider-text::before{left:0}
+.divider-text::after{right:0}
+.pw-row{display:flex;gap:8px;margin-bottom:10px}
+.pw-row input{flex:1}
+.pw-row button{
+  padding:0 18px;
+  background:var(--navy);color:#fff;
+  border:none;border-radius:8px;
+  font-family:inherit;font-weight:700;
+  cursor:pointer;
+}
+.modal-close{
+  background:none;
+  border:1.5px solid var(--border);
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  cursor:pointer;
+  color:var(--text-mute);
+  font-family:inherit;
+  font-size:14px;
+}
+.pw-msg{text-align:center;font-size:13px;min-height:18px;margin-bottom:8px}
+.pw-msg.ok{color:#16a34a}
+.pw-msg.ng{color:#dc2626}
+
+/* トースト */
+.toast{
+  position:fixed;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%) translateY(100px);
+  background:var(--navy);
+  color:#fff;
+  padding:12px 22px;
+  border-radius:24px;
+  font-size:14px;
+  box-shadow:var(--shadow-lg);
+  z-index:2000;
+  opacity:0;
+  transition:all .3s;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* フッター */
+footer{
+  text-align:center;
+  padding:30px 16px;
+  color:var(--text-mute);
+  font-size:12px;
+  border-top:1px solid var(--border);
+  margin-top:30px;
+}
+footer .motto{
+  font-family:'Noto Serif JP',serif;
+  color:var(--navy);
+  font-size:14px;
+  margin-bottom:6px;
+}
+
+/* エラー */
+.error-box{
+  background:#fef2f2;
+  border:1.5px solid #fecaca;
+  color:#991b1b;
+  padding:14px;
+  border-radius:10px;
+  font-size:14px;
+  margin-bottom:16px;
+  display:none;
+}
+.error-box.active{display:block}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      noteみっけ <span class="pro">PRO</span>
+    </div>
+    <div class="header-right">
+      <a href="https://spc-jp.github.io/note-mikke/" class="switch-btn" target="_blank">📘 通常版へ</a>
+      <span id="trialBadge" class="trial-badge">残り3回</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="tag">SOZORO-GAKI to NOTE</div>
+    <h1>走り書きから、心を動かすnote記事へ</h1>
+    <p>体験談をそのまま打ち込むだけ。AIが感情を整え、読者の心に届く一本にします。</p>
+  </div>
+
+  <div class="card">
+    <h2>📝 走り書きを入力</h2>
+    <div class="field">
+      <label for="memo">あなたのリアルな体験を、走り書きでOKです</label>
+      <div class="help">箇条書き・断片・口語、なんでも構いません。500〜2000字くらいが目安です。</div>
+      <textarea id="memo" placeholder="例：
+昨日の夜、3歳の娘がなかなか寝てくれなくて、もう21時を過ぎてた。
+いつも絵本を3冊読んでるけど、その日は仕事のメールが気になって早く切り上げたかった。
+でも娘に『パパ、今日も最後までいてくれる？』って言われて。
+その一言で、ハッとした。
+寝かしつけって、こっちが寝かせてるんじゃなくて、向こうが一日の終わりを一緒に閉じてくれてるんだなって。"></textarea>
+    </div>
+
+    <div class="field">
+      <label>カテゴリ（任意）</label>
+      <select id="category">
+        <option value="">選ばない</option>
+        <option value="子育て">子育て</option>
+        <option value="ダイエット・健康">ダイエット・健康</option>
+        <option value="人間関係">人間関係</option>
+        <option value="お金・節約">お金・節約</option>
+        <option value="仕事・キャリア">仕事・キャリア</option>
+        <option value="経営・起業">経営・起業</option>
+        <option value="夫婦・家族">夫婦・家族</option>
+        <option value="学び・自己成長">学び・自己成長</option>
+        <option value="その他">その他</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>記事のトーン</label>
+      <div class="radio-group">
+        <div class="radio-item">
+          <input type="radio" id="t1" name="tone" value="しみじみ語る" checked>
+          <label for="t1">🌙 しみじみ語る</label>
+        </div>
+        <div class="radio-item">
+          <input type="radio" id="t2" name="tone" value="元気に背中を押す">
+          <label for="t2">☀️ 背中を押す</label>
+        </div>
+        <div class="radio-item">
+          <input type="radio" id="t3" name="tone" value="淡々とユーモア">
+          <label for="t3">🌿 淡々ユーモア</label>
+        </div>
+      </div>
+    </div>
+
+    <div id="errorBox" class="error-box"></div>
+
+    <button id="genBtn" class="btn-primary">✨ note記事を生み出す</button>
+
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <div class="loading-msg" id="loadingMsg">AIが体験を読み込んでいます...</div>
+    </div>
+  </div>
+
+  <div id="results">
+
+    <div class="card">
+      <h2>💗 感情スコア</h2>
+      <div class="emotion-grid" id="emotionGrid"></div>
+      <div class="emotion-summary">
+        <div>合計：<b id="emotionTotal"></b> / 50点</div>
+        <div>最強の感情：<span class="emotion-keyword" id="emotionKeyword"></span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>👥 ターゲット読者（ペルソナ3名）</h2>
+      <div class="persona-list" id="personaList"></div>
+    </div>
+
+    <div class="card">
+      <h2>📖 note記事</h2>
+      <div class="article-actions">
+        <button class="btn-copy" id="copyArticleBtn">📋 記事全文をコピー</button>
+        <button class="btn-copy" id="copyTitleBtn">📋 タイトルだけコピー</button>
+      </div>
+      <div class="article-title" id="articleTitle"></div>
+      <div class="article-body" id="articleBody"></div>
+    </div>
+
+    <div class="card">
+      <h2>📊 自己採点</h2>
+      <div class="score-grid" id="scoreGrid"></div>
+      <div class="score-total">
+        <div class="label">TOTAL SCORE</div>
+        <div class="big"><span id="scoreTotal">--</span><small> / 100</small></div>
+      </div>
+    </div>
+
+    <div class="card" id="improveCard">
+      <h2>💡 改善コメント</h2>
+      <div id="improveList"></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- 課金モーダル -->
+<div id="paywall" class="modal-overlay">
+  <div class="modal">
+    <h3>🔓 無料体験が終了しました</h3>
+    <div class="sub">ご購入方法をお選びください</div>
+
+    <div class="plan-card light">
+      <div class="plan-title">🌱 ライト版（買い切り）</div>
+      <div class="plan-price">¥980<span style="font-size:13px;font-weight:400">／一度きり</span></div>
+      <div class="plan-note">noteで購入できます</div>
+      <div class="plan-features">
+        ✓ AI記事生成 50回まで利用可能<br>
+        ✓ 感情スコア・ペルソナ・採点付き<br>
+        ✓ noteで購入できます
+      </div>
+      <a href="https://note.com/_yoshibon" target="_blank" class="plan-btn">📕 noteで購入する</a>
+    </div>
+
+    <div class="plan-card pro">
+      <div class="badge-rec">おすすめ</div>
+      <div class="plan-title">✨ Pro版（サブスク）</div>
+      <div class="plan-price">¥2,980<span style="font-size:13px;font-weight:400;color:#fff">／月</span></div>
+      <div class="plan-note">解約自由</div>
+      <div class="plan-features">
+        ✓ 無制限利用<br>
+        ✓ 全機能フル搭載<br>
+        ✓ 新機能の先行アクセス
+      </div>
+      <a href="https://buy.stripe.com/REPLACE_PRO_LINK" target="_blank" class="plan-btn">💳 Pro版に申し込む</a>
+    </div>
+
+    <div class="divider-text">ーすでにご購入の方ー</div>
+
+    <div class="pw-msg" id="pwMsg"></div>
+    <div class="pw-row">
+      <input type="password" id="pwInput" placeholder="パスワードを入力">
+      <button id="pwBtn">解除</button>
+    </div>
+
+    <button class="modal-close" id="modalCloseBtn">閉じる</button>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<footer>
+  <div class="motto">考えるを、ひとりにしない</div>
+  <div>noteみっけPro by Smile Plus Consulting</div>
+</footer>
+
+<script>
+// ============================================================
+// 設定
+// ============================================================
+const WORKER_URL = 'https://note-mikke-pro.yymmatsu.workers.dev/';
+const FREE_LIMIT = 3;
+const LIGHT_LIMIT = 50;
+const STORAGE_COUNT = 'note_mikke_pro_count';
+const STORAGE_TIER = 'note_mikke_pro_tier';
+const STORAGE_LIGHT = 'note_mikke_pro_light_count';
+const PW_LIGHT = 'NMPRO-LIGHT-2026';
+const PW_PRO = 'NMPRO-PRO-2026';
+
+// ============================================================
+// localStorage
+// ============================================================
+function getTier(){ return localStorage.getItem(STORAGE_TIER) || 'free'; }
+function setTier(t){ localStorage.setItem(STORAGE_TIER, t); }
+function getCount(){ return parseInt(localStorage.getItem(STORAGE_COUNT) || '0'); }
+function addCount(){ localStorage.setItem(STORAGE_COUNT, getCount()+1); }
+function getLightCount(){ return parseInt(localStorage.getItem(STORAGE_LIGHT) || '0'); }
+function addLightCount(){ localStorage.setItem(STORAGE_LIGHT, getLightCount()+1); }
+
+function updateBadge(){
+  const badge = document.getElementById('trialBadge');
+  const tier = getTier();
+  if(tier === 'pro'){
+    badge.textContent = '✨ Pro版';
+    badge.classList.remove('warn');
+    return;
+  }
+  if(tier === 'light'){
+    const rem = Math.max(LIGHT_LIMIT - getLightCount(), 0);
+    badge.textContent = `🌱 ライト版 残り${rem}回`;
+    if(rem <= 5) badge.classList.add('warn');
+    return;
+  }
+  const rem = Math.max(FREE_LIMIT - getCount(), 0);
+  badge.textContent = `残り${rem}回`;
+  if(rem <= 0) badge.classList.add('warn');
+}
+
+function canUse(){
+  const tier = getTier();
+  if(tier === 'pro') return true;
+  if(tier === 'light') return getLightCount() < LIGHT_LIMIT;
+  return getCount() < FREE_LIMIT;
+}
+
+function consume(){
+  const tier = getTier();
+  if(tier === 'pro') return;
+  if(tier === 'light'){ addLightCount(); return; }
+  addCount();
+}
+
+// ============================================================
+// バリデーション
+// ============================================================
+function validate(){
+  const memo = document.getElementById('memo').value.trim();
+  const err = document.getElementById('errorBox');
+  if(memo.length < 30){
+    err.textContent = '⚠️ 走り書きが短すぎます。30文字以上で、リアルな体験を入れてみてください。';
+    err.classList.add('active');
+    return false;
+  }
+  if(memo.length > 4000){
+    err.textContent = '⚠️ 文字数が多すぎます。4000文字以内にしてください。';
+    err.classList.add('active');
+    return false;
+  }
+  err.classList.remove('active');
+  return true;
+}
+
+// ============================================================
+// プロンプト
+// ============================================================
+function buildPrompt(){
+  const memo = document.getElementById('memo').value.trim();
+  const category = document.getElementById('category').value;
+  const tone = document.querySelector('input[name="tone"]:checked').value;
+
+  return `あなたはnote公式アルゴリズム（構成・表現・専門性・人間らしい感情）に精通した、共感型ライティングの専門家です。
+ユーザーの「走り書き」を読み取り、心に響くnote記事に整える役割を担います。
+
+【ユーザーの走り書き】
+${memo}
+
+【カテゴリ】${category || '未指定'}
+【トーン】${tone}
+
+以下のJSON形式のみで返してください。前置き・説明・コードブロック記号は一切不要です。
+
+{
+  "emotionScore": {
+    "joy": 整数0-10,
+    "anger": 整数0-10,
+    "sadness": 整数0-10,
+    "surprise": 整数0-10,
+    "empathy": 整数0-10,
+    "total": 5項目の合計,
+    "keyword": "最も強い感情を表す日本語キーワード（例：気づき、後悔、希望）"
+  },
+  "personas": [
+    {"name":"仮名","age":年齢,"gender":"性別","job":"職業","problem":"抱えている悩み（30字程度）","desire":"この記事を読んで得たい変化（30字程度）"},
+    {同形式で2人目},
+    {同形式で3人目}
+  ],
+  "article": {
+    "title":"30字以内、感情ワードを含むキャッチーなタイトル",
+    "intro":"冒頭フック。共感を呼ぶ一文から始める（80〜120字）",
+    "body":"本文。1500〜2000字。### 小見出しを3〜4個入れる。走り書きの事実を脚色せず、体験をそのまま深掘りする。${tone}のトーンを徹底する。",
+    "insight":"気づきパート。学びを1つに絞る（150〜200字）",
+    "closing":"締めの一言。読者の背中をそっと押す（80〜120字）"
+  },
+  "score": {
+    "structure": 0-20の整数,
+    "expression": 0-20の整数,
+    "expertise": 0-20の整数,
+    "humanity": 0-40の整数,
+    "total": 4項目の合計（0-100）
+  },
+  "improvements": [
+    {"category":"構成 or 表現 or 専門性 or 人間らしさ", "items":[
+      {"where":"どこを","how":"どう直すと","why":"なぜ良くなるのか"},
+      {同形式で2つ目},
+      {同形式で3つ目}
+    ]}
+  ]
+}
+
+【ルール】
+・走り書きの事実を勝手に追加・脚色しない
+・AI丸出しの定型表現（「〜してみてはいかがでしょうか」等）を絶対に使わない
+・口語のリズムを残し、人間味のある文章にする
+・improvementsには採点80点未満のカテゴリのみ含める。すべて80点以上なら空配列[]
+・キャッチーだが大げさすぎないタイトルにする
+・本文は必ず「### 小見出し」を3〜4個入れる`;
+}
+
+// ============================================================
+// API呼び出し
+// ============================================================
+const loadingMessages = [
+  'AIが体験を読み込んでいます...',
+  '感情のかたちを描き出しています...',
+  '読者のペルソナを想像しています...',
+  '言葉を一文字ずつ選んでいます...',
+  '記事を磨き上げています...'
+];
+let loadingTimer = null;
+
+function startLoadingAnim(){
+  const msg = document.getElementById('loadingMsg');
+  let i = 0;
+  msg.textContent = loadingMessages[0];
+  loadingTimer = setInterval(()=>{
+    i = (i+1) % loadingMessages.length;
+    msg.textContent = loadingMessages[i];
+  }, 2500);
+}
+function stopLoadingAnim(){
+  if(loadingTimer){ clearInterval(loadingTimer); loadingTimer = null; }
+}
+
+async function callAPI(prompt){
+  const res = await fetch(WORKER_URL, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 6000,
+      messages: [{ role:'user', content: prompt }]
+    })
+  });
+  if(!res.ok){
+    const txt = await res.text();
+    throw new Error('API エラー: ' + res.status + ' ' + txt.slice(0,200));
+  }
+  const data = await res.json();
+  let text = '';
+  if(data.content && Array.isArray(data.content)){
+    text = data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
+  } else if(typeof data === 'string'){
+    text = data;
+  } else {
+    text = JSON.stringify(data);
+  }
+  return text;
+}
+
+function extractJSON(text){
+  // コードブロック除去
+  let t = text.replace(/```json|```/g, '').trim();
+  // 最初の{から最後の}までを抽出
+  const s = t.indexOf('{');
+  const e = t.lastIndexOf('}');
+  if(s === -1 || e === -1) throw new Error('JSON が見つかりませんでした');
+  return JSON.parse(t.slice(s, e+1));
+}
+
+// ============================================================
+// レンダリング
+// ============================================================
+function renderEmotion(e){
+  const grid = document.getElementById('emotionGrid');
+  const labels = { joy:'喜び', anger:'怒り', sadness:'哀しみ', surprise:'驚き', empathy:'共感' };
+  grid.innerHTML = '';
+  ['joy','anger','sadness','surprise','empathy'].forEach(key=>{
+    const v = e[key] || 0;
+    const pct = (v/10)*100;
+    grid.insertAdjacentHTML('beforeend', `
+      <div class="emotion-item">
+        <div class="emotion-name">${labels[key]}</div>
+        <div class="emotion-value">${v}<small style="font-size:12px;color:var(--text-mute)">/10</small></div>
+        <div class="emotion-bar"><div class="emotion-bar-fill" style="width:${pct}%"></div></div>
+      </div>
+    `);
+  });
+  document.getElementById('emotionTotal').textContent = e.total || 0;
+  document.getElementById('emotionKeyword').textContent = e.keyword || '—';
+}
+
+function renderPersonas(arr){
+  const list = document.getElementById('personaList');
+  list.innerHTML = '';
+  (arr || []).forEach((p, i)=>{
+    list.insertAdjacentHTML('beforeend', `
+      <div class="persona-card">
+        <div class="persona-head">
+          <div class="persona-num">${i+1}</div>
+          <div>
+            <div class="persona-name">${escapeHTML(p.name || '—')}</div>
+            <div class="persona-meta">${escapeHTML(p.age || '')}歳 ／ ${escapeHTML(p.gender || '')} ／ ${escapeHTML(p.job || '')}</div>
+          </div>
+        </div>
+        <div class="persona-row"><b>悩み：</b>${escapeHTML(p.problem || '')}</div>
+        <div class="persona-row"><b>得たい変化：</b>${escapeHTML(p.desire || '')}</div>
+      </div>
+    `);
+  });
+}
+
+function renderArticle(a){
+  document.getElementById('articleTitle').textContent = a.title || '';
+  // body の ### を h3 に変換
+  const bodyHTML = (a.body || '')
+    .split('\n')
+    .map(line=>{
+      const m = line.match(/^###\s+(.+)/);
+      if(m) return `<h3>${escapeHTML(m[1])}</h3>`;
+      return escapeHTML(line);
+    })
+    .join('\n');
+  document.getElementById('articleBody').innerHTML = `
+    <p>${escapeHTML(a.intro || '')}</p>
+
+${bodyHTML}
+
+<h3>気づき</h3>
+<p>${escapeHTML(a.insight || '')}</p>
+
+<p style="margin-top:24px">${escapeHTML(a.closing || '')}</p>
+  `;
+}
+
+function renderScore(s){
+  const grid = document.getElementById('scoreGrid');
+  grid.innerHTML = '';
+  const items = [
+    {label:'構成', key:'structure', max:20},
+    {label:'表現', key:'expression', max:20},
+    {label:'専門性', key:'expertise', max:20},
+    {label:'人間らしさ', key:'humanity', max:40}
+  ];
+  items.forEach(it=>{
+    grid.insertAdjacentHTML('beforeend', `
+      <div class="score-item">
+        <div class="score-label">${it.label}</div>
+        <div class="score-value">${s[it.key] || 0}<span class="score-max">/${it.max}</span></div>
+      </div>
+    `);
+  });
+  document.getElementById('scoreTotal').textContent = s.total || 0;
+}
+
+function renderImprovements(arr){
+  const list = document.getElementById('improveList');
+  const card = document.getElementById('improveCard');
+  if(!arr || arr.length === 0){
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = '';
+  list.innerHTML = '';
+  arr.forEach(block=>{
+    let html = `<div class="improve-block"><div class="improve-cat">📍 ${escapeHTML(block.category || '')}</div>`;
+    (block.items || []).forEach(it=>{
+      html += `<div class="improve-item">
+        <div><b>どこを</b> ${escapeHTML(it.where || '')}</div>
+        <div><b>どう直す</b> ${escapeHTML(it.how || '')}</div>
+        <div><b>なぜ</b> ${escapeHTML(it.why || '')}</div>
+      </div>`;
+    });
+    html += '</div>';
+    list.insertAdjacentHTML('beforeend', html);
+  });
+}
+
+function escapeHTML(s){
+  if(s == null) return '';
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+// ============================================================
+// メイン処理
+// ============================================================
+async function generate(){
+  if(!validate()) return;
+
+  if(!canUse()){
+    document.getElementById('paywall').classList.add('active');
+    return;
+  }
+
+  const btn = document.getElementById('genBtn');
+  const loading = document.getElementById('loading');
+  const results = document.getElementById('results');
+
+  btn.disabled = true;
+  loading.classList.add('active');
+  results.classList.remove('active');
+  startLoadingAnim();
+
+  try{
+    const text = await callAPI(buildPrompt());
+    const json = extractJSON(text);
+
+    renderEmotion(json.emotionScore || {});
+    renderPersonas(json.personas || []);
+    renderArticle(json.article || {});
+    renderScore(json.score || {});
+    renderImprovements(json.improvements || []);
+
+    consume();
+    updateBadge();
+    results.classList.add('active');
+    setTimeout(()=>{
+      results.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 100);
+  } catch(err){
+    showToast('❌ 生成に失敗しました：' + err.message);
+    const eb = document.getElementById('errorBox');
+    eb.textContent = '❌ エラー：' + err.message + '\n（時間をおいて再度お試しください）';
+    eb.classList.add('active');
+  } finally {
+    btn.disabled = false;
+    loading.classList.remove('active');
+    stopLoadingAnim();
+  }
+}
+
+// ============================================================
+// コピー
+// ============================================================
+function copyArticle(){
+  const t = document.getElementById('articleTitle').textContent;
+  const body = document.getElementById('articleBody').innerText;
+  const text = `${t}\n\n${body}`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = document.getElementById('copyArticleBtn');
+    btn.textContent = '✓ コピーしました';
+    btn.classList.add('copied');
+    setTimeout(()=>{
+      btn.textContent = '📋 記事全文をコピー';
+      btn.classList.remove('copied');
+    }, 2000);
+    showToast('📋 記事をコピーしました');
+  });
+}
+function copyTitle(){
+  const t = document.getElementById('articleTitle').textContent;
+  navigator.clipboard.writeText(t).then(()=>{
+    const btn = document.getElementById('copyTitleBtn');
+    btn.textContent = '✓ コピーしました';
+    btn.classList.add('copied');
+    setTimeout(()=>{
+      btn.textContent = '📋 タイトルだけコピー';
+      btn.classList.remove('copied');
+    }, 2000);
+    showToast('📋 タイトルをコピーしました');
+  });
+}
+
+// ============================================================
+// パスワード解除
+// ============================================================
+function checkPassword(){
+  const pw = document.getElementById('pwInput').value.trim();
+  const msg = document.getElementById('pwMsg');
+  if(pw === PW_PRO){
+    setTier('pro');
+    msg.textContent = '✓ Pro版を有効化しました（無制限利用可能）';
+    msg.className = 'pw-msg ok';
+    updateBadge();
+    setTimeout(()=>{
+      document.getElementById('paywall').classList.remove('active');
+      msg.textContent=''; msg.className='pw-msg';
+      document.getElementById('pwInput').value='';
+    }, 1200);
+  } else if(pw === PW_LIGHT){
+    setTier('light');
+    localStorage.setItem(STORAGE_LIGHT, '0');
+    msg.textContent = '✓ ライト版を有効化しました（50回まで利用可能）';
+    msg.className = 'pw-msg ok';
+    updateBadge();
+    setTimeout(()=>{
+      document.getElementById('paywall').classList.remove('active');
+      msg.textContent=''; msg.className='pw-msg';
+      document.getElementById('pwInput').value='';
+    }, 1200);
+  } else {
+    msg.textContent = '✗ パスワードが正しくありません';
+    msg.className = 'pw-msg ng';
+  }
+}
+
+// ============================================================
+// トースト
+// ============================================================
+function showToast(text){
+  const t = document.getElementById('toast');
+  t.textContent = text;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+// ============================================================
+// 初期化
+// ============================================================
+document.getElementById('genBtn').addEventListener('click', generate);
+document.getElementById('copyArticleBtn').addEventListener('click', copyArticle);
+document.getElementById('copyTitleBtn').addEventListener('click', copyTitle);
+document.getElementById('pwBtn').addEventListener('click', checkPassword);
+document.getElementById('pwInput').addEventListener('keydown', e=>{
+  if(e.key === 'Enter') checkPassword();
+});
+document.getElementById('modalCloseBtn').addEventListener('click', ()=>{
+  document.getElementById('paywall').classList.remove('active');
+});
+document.getElementById('paywall').addEventListener('click', e=>{
+  if(e.target.id === 'paywall') document.getElementById('paywall').classList.remove('active');
+});
+
+updateBadge();
+</script>
+
+</body>
+</html>
