@@ -534,6 +534,52 @@ footer .motto{
   margin-bottom:6px;
 }
 
+/* プロフィールCTA */
+.profile-cta{
+  margin-top:24px;
+  padding:16px 18px;
+  background:var(--light-blue);
+  border-left:4px solid var(--gold);
+  border-radius:0 10px 10px 0;
+  font-size:14px;
+  line-height:1.8;
+}
+.profile-cta a{
+  color:var(--navy);
+  font-weight:700;
+  word-break:break-all;
+  text-decoration:none;
+}
+.profile-cta a:hover{text-decoration:underline}
+
+/* ハッシュタグ */
+.hashtags-block{
+  margin-top:20px;
+  padding-top:16px;
+  border-top:1px solid var(--border);
+}
+.hashtags-label{
+  font-size:12px;
+  color:var(--text-mute);
+  margin-bottom:10px;
+  letter-spacing:.1em;
+}
+.hashtags-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:12px;
+}
+.hashtag{
+  background:var(--light-blue);
+  color:var(--navy);
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:500;
+  border:1px solid #d8dffa;
+}
+
 /* エラー */
 .error-box{
   background:#fef2f2;
@@ -616,6 +662,30 @@ footer .motto{
       </div>
     </div>
 
+    <div class="field">
+      <label>記事の長さ</label>
+      <div class="radio-group">
+        <div class="radio-item">
+          <input type="radio" id="len1" name="length" value="short">
+          <label for="len1">🌱 さくっと<br><span style="font-size:11px;color:var(--text-mute);font-weight:400">800〜1200字</span></label>
+        </div>
+        <div class="radio-item">
+          <input type="radio" id="len2" name="length" value="standard" checked>
+          <label for="len2">📖 標準<br><span style="font-size:11px;color:var(--text-mute);font-weight:400">1500〜2000字</span></label>
+        </div>
+        <div class="radio-item">
+          <input type="radio" id="len3" name="length" value="long">
+          <label for="len3">📚 じっくり<br><span style="font-size:11px;color:var(--text-mute);font-weight:400">2500〜3000字</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>プロフィールURL（任意）</label>
+      <div class="help">noteプロフィール・X・自分のLPなど。入力があれば文末に自然な誘導文を追加します。</div>
+      <input type="text" id="profileUrl" placeholder="https://note.com/_yoshibon">
+    </div>
+
     <div id="errorBox" class="error-box"></div>
 
     <button id="genBtn" class="btn-primary">✨ note記事を生み出す</button>
@@ -647,9 +717,14 @@ footer .motto{
       <div class="article-actions">
         <button class="btn-copy" id="copyArticleBtn">📋 記事全文をコピー</button>
         <button class="btn-copy" id="copyTitleBtn">📋 タイトルだけコピー</button>
+        <button class="btn-copy" id="copyHashtagsBtn">📋 タグだけコピー</button>
       </div>
       <div class="article-title" id="articleTitle"></div>
       <div class="article-body" id="articleBody"></div>
+      <div class="hashtags-block">
+        <div class="hashtags-label">📌 ハッシュタグ</div>
+        <div class="hashtags-list" id="hashtagsList"></div>
+      </div>
     </div>
 
     <div class="card">
@@ -802,6 +877,24 @@ function buildPrompt(){
   const memo = document.getElementById('memo').value.trim();
   const category = document.getElementById('category').value;
   const tone = document.querySelector('input[name="tone"]:checked').value;
+  const length = document.querySelector('input[name="length"]:checked').value;
+  const profileUrl = document.getElementById('profileUrl').value.trim();
+
+  const lengthSpec = {
+    short: '800〜1200字',
+    standard: '1500〜2000字',
+    long: '2500〜3000字'
+  }[length];
+
+  const subheadCount = {
+    short: '2〜3個',
+    standard: '3〜4個',
+    long: '4〜5個'
+  }[length];
+
+  const profileBlock = profileUrl
+    ? `\n【プロフィールURL】${profileUrl}\n→ profileCTAフィールドに、記事のテーマに自然につながる誘導文を1〜2文で作成してください。「↓こちらをご覧ください」のようなAI丸出し表現は禁止。「他にも〜について書いています」「もしよかったら〜のぞいてみてくださいね」のような、体験談の延長として自然な誘導にしてください。`
+    : `\n→ profileCTAフィールドは空文字 "" にしてください。`;
 
   return `あなたはnote公式アルゴリズム（構成・表現・専門性・人間らしい感情）に精通した、共感型ライティングの専門家です。
 ユーザーの「走り書き」を読み取り、心に響くnote記事に整える役割を担います。
@@ -811,6 +904,8 @@ ${memo}
 
 【カテゴリ】${category || '未指定'}
 【トーン】${tone}
+【記事の長さ】${lengthSpec}
+${profileBlock}
 
 以下のJSON形式のみで返してください。前置き・説明・コードブロック記号は一切不要です。
 
@@ -832,9 +927,11 @@ ${memo}
   "article": {
     "title":"30字以内、感情ワードを含むキャッチーなタイトル",
     "intro":"冒頭フック。共感を呼ぶ一文から始める（80〜120字）",
-    "body":"本文。1500〜2000字。### 小見出しを3〜4個入れる。走り書きの事実を脚色せず、体験をそのまま深掘りする。${tone}のトーンを徹底する。",
+    "body":"本文。${lengthSpec}。### 小見出しを${subheadCount}入れる。走り書きの事実を脚色せず、体験をそのまま深掘りする。${tone}のトーンを徹底する。",
     "insight":"気づきパート。学びを1つに絞る（150〜200字）",
-    "closing":"締めの一言。読者の背中をそっと押す（80〜120字）"
+    "closing":"締めの一言。読者の背中をそっと押す（80〜120字）",
+    "profileCTA":"プロフィール誘導文（上記ルール参照）",
+    "hashtags":["#タグ1","#タグ2","#タグ3","#タグ4","#タグ5"]
   },
   "score": {
     "structure": 0-20の整数,
@@ -858,7 +955,15 @@ ${memo}
 ・口語のリズムを残し、人間味のある文章にする
 ・improvementsには採点80点未満のカテゴリのみ含める。すべて80点以上なら空配列[]
 ・キャッチーだが大げさすぎないタイトルにする
-・本文は必ず「### 小見出し」を3〜4個入れる`;
+・本文は必ず「### 小見出し」を${subheadCount}入れる
+・本文の文字数は${lengthSpec}を厳守する
+
+【ハッシュタグのルール】
+・必ず5個生成する
+・先頭に # をつける（例：#子育て）
+・noteで検索されやすい一般的なタグを優先
+・カテゴリ・記事のテーマ・感情キーワードから選ぶ
+・1タグは1〜10文字程度のシンプルな日本語または英単語`;
 }
 
 // ============================================================
@@ -975,6 +1080,18 @@ function renderArticle(a){
       return escapeHTML(line);
     })
     .join('\n');
+
+  // プロフィールCTA（プロフィールURL入力時のみ）
+  const profileUrl = document.getElementById('profileUrl').value.trim();
+  let profileHTML = '';
+  if(a.profileCTA && profileUrl){
+    profileHTML = `
+<div class="profile-cta">
+${escapeHTML(a.profileCTA)}<br>
+👉 <a href="${escapeHTML(profileUrl)}" target="_blank">${escapeHTML(profileUrl)}</a>
+</div>`;
+  }
+
   document.getElementById('articleBody').innerHTML = `
     <p>${escapeHTML(a.intro || '')}</p>
 
@@ -984,7 +1101,17 @@ ${bodyHTML}
 <p>${escapeHTML(a.insight || '')}</p>
 
 <p style="margin-top:24px">${escapeHTML(a.closing || '')}</p>
+${profileHTML}
   `;
+
+  // ハッシュタグ表示
+  const hashList = document.getElementById('hashtagsList');
+  hashList.innerHTML = '';
+  const tags = a.hashtags || [];
+  tags.forEach(tag=>{
+    const t = String(tag).startsWith('#') ? tag : '#' + tag;
+    hashList.insertAdjacentHTML('beforeend', `<span class="hashtag">${escapeHTML(t)}</span>`);
+  });
 }
 
 function renderScore(s){
@@ -1094,7 +1221,9 @@ async function generate(){
 function copyArticle(){
   const t = document.getElementById('articleTitle').textContent;
   const body = document.getElementById('articleBody').innerText;
-  const text = `${t}\n\n${body}`;
+  const tags = Array.from(document.querySelectorAll('#hashtagsList .hashtag'))
+    .map(el=>el.textContent).join(' ');
+  const text = `${t}\n\n${body}\n\n${tags}`;
   navigator.clipboard.writeText(text).then(()=>{
     const btn = document.getElementById('copyArticleBtn');
     btn.textContent = '✓ コピーしました';
@@ -1103,7 +1232,7 @@ function copyArticle(){
       btn.textContent = '📋 記事全文をコピー';
       btn.classList.remove('copied');
     }, 2000);
-    showToast('📋 記事をコピーしました');
+    showToast('📋 記事＋タグをコピーしました');
   });
 }
 function copyTitle(){
@@ -1117,6 +1246,21 @@ function copyTitle(){
       btn.classList.remove('copied');
     }, 2000);
     showToast('📋 タイトルをコピーしました');
+  });
+}
+function copyHashtags(){
+  const tags = Array.from(document.querySelectorAll('#hashtagsList .hashtag'))
+    .map(el=>el.textContent).join(' ');
+  if(!tags){ showToast('⚠️ タグがまだありません'); return; }
+  navigator.clipboard.writeText(tags).then(()=>{
+    const btn = document.getElementById('copyHashtagsBtn');
+    btn.textContent = '✓ コピーしました';
+    btn.classList.add('copied');
+    setTimeout(()=>{
+      btn.textContent = '📋 タグだけコピー';
+      btn.classList.remove('copied');
+    }, 2000);
+    showToast('📋 ハッシュタグをコピーしました');
   });
 }
 
@@ -1169,6 +1313,7 @@ function showToast(text){
 document.getElementById('genBtn').addEventListener('click', generate);
 document.getElementById('copyArticleBtn').addEventListener('click', copyArticle);
 document.getElementById('copyTitleBtn').addEventListener('click', copyTitle);
+document.getElementById('copyHashtagsBtn').addEventListener('click', copyHashtags);
 document.getElementById('pwBtn').addEventListener('click', checkPassword);
 document.getElementById('pwInput').addEventListener('keydown', e=>{
   if(e.key === 'Enter') checkPassword();
