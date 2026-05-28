@@ -580,6 +580,38 @@ footer .motto{
   border:1px solid #d8dffa;
 }
 
+/* 追加指示チップ */
+.chip-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:10px;
+}
+.chip{
+  background:#fff;
+  border:1.5px solid var(--border);
+  color:var(--navy);
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:12px;
+  cursor:pointer;
+  font-family:inherit;
+  transition:all .15s;
+  white-space:nowrap;
+}
+.chip:hover{
+  background:var(--light-blue);
+  border-color:var(--navy);
+}
+.chip:active{transform:scale(0.96)}
+.chip-label{
+  font-size:11px;
+  color:var(--text-mute);
+  margin-top:8px;
+  margin-bottom:4px;
+  letter-spacing:.05em;
+}
+
 /* エラー */
 .error-box{
   background:#fef2f2;
@@ -714,6 +746,27 @@ footer .motto{
       <label>プロフィールURL（任意）</label>
       <div class="help">noteプロフィール・X・自分のLPなど。入力があれば文末に自然な誘導文を追加します。</div>
       <input type="text" id="profileUrl" placeholder="https://note.com/_yoshibon">
+    </div>
+
+    <div class="field">
+      <label>💡 追加の演出指示（任意）</label>
+      <div class="help">特別な書き方をしてほしい時に。下のチップをタップするとここに追加されます。</div>
+      <textarea id="extraInstructions" placeholder="例：
+・冒頭は「え、これ自分のことだ…」と共感させる
+・見出しはキャッチーなフレーズにする
+・最後は行動喚起で締める" style="min-height:90px"></textarea>
+      <div class="chip-label">📋 ワンタップ追加</div>
+      <div class="chip-row" id="chipRow">
+        <button type="button" class="chip" data-text="冒頭は「え、これ自分のことだ…」と共感させるように書く">💗 共感フックで始める</button>
+        <button type="button" class="chip" data-text="見出しにはキャッチーで引きの強いフレーズを入れる">✨ キャッチー見出し</button>
+        <button type="button" class="chip" data-text="最後は読者への行動喚起で締める（明日からこうしてみよう等）">🚀 行動喚起で締める</button>
+        <button type="button" class="chip" data-text="短い文を連続させてリズムを作る">🎵 短文リズム</button>
+        <button type="button" class="chip" data-text="数字を効果的に使う（3つの理由、たった5分等）">🔢 数字を活用</button>
+        <button type="button" class="chip" data-text="「正直に言うと」「実は」など本音の言葉を入れる">💬 体験者の本音</button>
+        <button type="button" class="chip" data-text="箇条書きを2〜3箇所に入れて読みやすくする">📝 箇条書き活用</button>
+        <button type="button" class="chip" data-text="体言止めを効果的に使う">🌿 体言止め</button>
+        <button type="button" class="chip" data-text="クリア">🗑️ クリア</button>
+      </div>
     </div>
 
     <div id="errorBox" class="error-box"></div>
@@ -910,6 +963,7 @@ function buildPrompt(){
   const ending = document.querySelector('input[name="ending"]:checked').value;
   const length = document.querySelector('input[name="length"]:checked').value;
   const profileUrl = document.getElementById('profileUrl').value.trim();
+  const extra = document.getElementById('extraInstructions').value.trim();
 
   const lengthSpec = {
     short: '800〜1200字',
@@ -933,6 +987,10 @@ function buildPrompt(){
     ? `\n【プロフィールURL】${profileUrl}\n→ profileCTAフィールドに、記事のテーマに自然につながる誘導文を1〜2文で作成してください。「↓こちらをご覧ください」のようなAI丸出し表現は禁止。「他にも〜について書いています」「もしよかったら〜のぞいてみてくださいね」のような、体験談の延長として自然な誘導にしてください。`
     : `\n→ profileCTAフィールドは空文字 "" にしてください。`;
 
+  const extraBlock = extra
+    ? `\n\n【追加の演出指示（最優先）】\n${extra}\n→ 上記の指示は他のルールよりも優先して必ず反映してください。`
+    : '';
+
   return `あなたはnote公式アルゴリズム（構成・表現・専門性・人間らしい感情）に精通した、共感型ライティングの専門家です。
 ユーザーの「走り書き」を読み取り、心に響くnote記事に整える役割を担います。
 
@@ -943,7 +1001,7 @@ ${memo}
 【トーン】${tone}
 【結末の方向性】${ending}
 【記事の長さ】${lengthSpec}
-${profileBlock}
+${profileBlock}${extraBlock}
 
 以下のJSON形式のみで返してください。前置き・説明・コードブロック記号は一切不要です。
 
@@ -1354,6 +1412,27 @@ document.getElementById('copyArticleBtn').addEventListener('click', copyArticle)
 document.getElementById('copyTitleBtn').addEventListener('click', copyTitle);
 document.getElementById('copyHashtagsBtn').addEventListener('click', copyHashtags);
 document.getElementById('pwBtn').addEventListener('click', checkPassword);
+
+// チップボタン：追加の演出指示
+document.getElementById('chipRow').addEventListener('click', e=>{
+  if(!e.target.classList.contains('chip')) return;
+  const text = e.target.getAttribute('data-text');
+  const ta = document.getElementById('extraInstructions');
+  if(text === 'クリア'){
+    ta.value = '';
+    showToast('🗑️ 演出指示をクリアしました');
+    return;
+  }
+  const current = ta.value.trim();
+  const line = '・' + text;
+  // すでに同じ指示があれば重複追加しない
+  if(current.includes(text)){
+    showToast('⚠️ すでに追加されています');
+    return;
+  }
+  ta.value = current ? current + '\n' + line : line;
+  showToast('✓ 指示を追加しました');
+});
 document.getElementById('pwInput').addEventListener('keydown', e=>{
   if(e.key === 'Enter') checkPassword();
 });
